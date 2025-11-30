@@ -274,7 +274,8 @@ def is_likely_plant_image(image: Image.Image) -> Tuple[bool, float]:
     """
     Check if image is likely a plant/leaf based on color analysis.
     Returns: (is_likely_plant, green_ratio)
-    Note: Diseased leaves may have less green (brown/yellow spots), so we're more lenient.
+    Note: Very lenient - only rejects clearly non-plant images (devices, objects).
+    Diseased leaves may have very little green (brown/yellow spots), so we accept most images.
     """
     if image.mode != 'RGB':
         image = image.convert('RGB')
@@ -291,21 +292,15 @@ def is_likely_plant_image(image: Image.Image) -> Tuple[bool, float]:
     red_ratio = np.mean(red_channel) / 255.0
     blue_ratio = np.mean(blue_channel) / 255.0
     
-    # Check if green is dominant (less strict - diseased leaves may have brown/yellow)
-    green_dominance = (np.mean(green_channel) > np.mean(red_channel) * 1.05 and 
-                      np.mean(green_channel) > np.mean(blue_channel) * 1.05)
-    
     # Check for clearly unnatural colors (devices, objects often have bright non-green colors)
-    # Only flag if it's clearly not a plant (very bright non-green with very low green)
-    has_bright_non_green = (red_ratio > 0.6 or blue_ratio > 0.6) and green_ratio < 0.25
+    # Only flag if it's VERY clearly not a plant (very bright non-green with very low green)
+    # This catches things like phones, tablets, etc. but allows diseased leaves
+    has_bright_non_green = (red_ratio > 0.7 or blue_ratio > 0.7) and green_ratio < 0.15
     
-    # Check for natural plant colors - even diseased leaves have some green
-    # Lower threshold to account for diseased/brown leaves
-    has_some_green = green_ratio > 0.20  # Even diseased leaves have some green
-    
-    # More lenient: Accept if it has some green AND (green dominance OR not clearly unnatural)
-    # This allows diseased leaves with brown/yellow spots
-    is_plant = has_some_green and (green_dominance or (not has_bright_non_green and green_ratio > 0.15))
+    # Very lenient: Accept almost everything except clearly non-plant images
+    # Diseased leaves can have green_ratio as low as 0.10-0.15 due to brown/yellow spots
+    # We only reject if it's clearly a device/object (bright colors, no green)
+    is_plant = not has_bright_non_green
     
     return is_plant, green_ratio
 
@@ -383,20 +378,18 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
         warning_message = ""
         
         # Priority 1: Non-plant image (most important) - only show if clearly not a plant
-        if not is_plant and green_ratio < 0.15:
+        # Only flag if it's VERY clearly not a plant (very low green, bright non-green colors)
+        if not is_plant:
             warning_message = "🚫 **INVALID INPUT: This image doesn't appear to be a plant leaf!**\n\n"
             warning_message += "The uploaded image appears to be a device, object, or non-plant image. "
             warning_message += "This model is designed specifically for crop leaf disease detection.\n\n"
             warning_message += "**Please upload:** A clear, well-lit photograph of a single crop leaf (tomato, potato, apple, corn, grape, etc.)\n\n"
         
-        # Priority 2: Low confidence (even if it might be a plant)
+        # Priority 2: Low confidence (only show as a note, not a warning)
         if low_confidence and is_plant:
-            if warning_message:
-                warning_message += f"⚠️ **Note:** Prediction confidence is {confidence * 100:.1f}%. "
-                warning_message += "For more accurate results, use a clear, well-lit image of a single leaf.\n\n"
-            else:
-                warning_message = f"⚠️ **Note:** Prediction confidence is {confidence * 100:.1f}%. "
-                warning_message += "The model detected a disease, but for best results, use a clearer, well-lit image.\n\n"
+            # Don't show warning for low confidence - just let the model prediction show
+            # The model is pre-trained and may have lower confidence, which is normal
+            pass
         
         # Extract disease name (remove crop name for info lookup)
         disease_key = display_name
@@ -420,10 +413,13 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
         confidence_str = f"{confidence * 100:.1f}%"
         
         # Format description with severity and warning
-        if "healthy" in predicted_class.lower():
-            description = f"{warning_message}**Status:** Healthy\n\n{info['description']}"
+        # Only show warning if it's clearly not a plant
+        if not is_plant:
+            description = warning_message
+        elif "healthy" in predicted_class.lower():
+            description = f"**Status:** Healthy\n\n{info['description']}"
         else:
-            description = f"{warning_message}**Severity:** {info['severity']}\n\n**Detected:** {display_name}\n\n{info['description']}"
+            description = f"**Severity:** {info['severity']}\n\n**Detected:** {display_name}\n\n{info['description']}"
         
         # Format recommendation - only override for clearly invalid inputs
         if not is_plant and green_ratio < 0.15:
