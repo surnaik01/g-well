@@ -474,7 +474,7 @@ def create_interface():
         print(f"Warning: Model initialization error: {e}")
         print("App will continue but may have reduced functionality.")
     
-    with gr.Blocks(title="G-well - Disease Detection Demo", theme=gr.themes.Soft()) as demo:
+    with gr.Blocks(title="G-well - Disease Detection Demo") as demo:
         gr.Markdown(
             """
             # 🌱 G-well - Real-Time Leaf Disease Detection
