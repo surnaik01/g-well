@@ -422,7 +422,7 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
             description = f"**Severity:** {info['severity']}\n\n**Detected:** {display_name}\n\n{info['description']}"
         
         # Format recommendation - only override for clearly invalid inputs
-        if not is_plant and green_ratio < 0.15:
+        if not is_plant:
             recommendation = "🚫 **Invalid Image Type Detected**\n\n"
             recommendation += "This image does not appear to be a plant leaf. The G-well model is specifically trained to detect diseases in crop leaves.\n\n"
             recommendation += "**What to upload:**\n"
