@@ -274,8 +274,8 @@ def is_likely_plant_image(image: Image.Image) -> Tuple[bool, float]:
     """
     Check if image is likely a plant/leaf based on color analysis.
     Returns: (is_likely_plant, green_ratio)
-    Note: Very lenient - only rejects clearly non-plant images (devices, objects).
-    Diseased leaves may have very little green (brown/yellow spots), so we accept most images.
+    Note: EXTREMELY lenient - only rejects very obvious non-plant images.
+    Accepts crops, fields, hands holding plants, diseased leaves, etc.
     """
     if image.mode != 'RGB':
         image = image.convert('RGB')
@@ -292,15 +292,17 @@ def is_likely_plant_image(image: Image.Image) -> Tuple[bool, float]:
     red_ratio = np.mean(red_channel) / 255.0
     blue_ratio = np.mean(blue_channel) / 255.0
     
-    # Check for clearly unnatural colors (devices, objects often have bright non-green colors)
-    # Only flag if it's VERY clearly not a plant (very bright non-green with very low green)
-    # This catches things like phones, tablets, etc. but allows diseased leaves
-    has_bright_non_green = (red_ratio > 0.7 or blue_ratio > 0.7) and green_ratio < 0.15
+    # EXTREMELY strict criteria for rejection - only reject if it's VERY clearly not a plant
+    # This catches things like phones, tablets, pure blue/red objects, but accepts:
+    # - Crops in fields (even with hands, sky, background)
+    # - Diseased leaves (brown/yellow spots)
+    # - Multiple leaves/stalks
+    # - Any image with ANY green at all
+    has_bright_non_green = (red_ratio > 0.8 or blue_ratio > 0.8) and green_ratio < 0.10
     
-    # Very lenient: Accept almost everything except clearly non-plant images
-    # Diseased leaves can have green_ratio as low as 0.10-0.15 due to brown/yellow spots
-    # We only reject if it's clearly a device/object (bright colors, no green)
-    is_plant = not has_bright_non_green
+    # Accept almost everything - only reject if it's clearly a device/object with no green
+    # This allows crops, fields, hands holding plants, diseased leaves, etc.
+    is_plant = not has_bright_non_green or green_ratio > 0.05
     
     return is_plant, green_ratio
 
@@ -377,19 +379,17 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
         # ALWAYS show warning for low confidence OR non-plant images
         warning_message = ""
         
-        # Priority 1: Non-plant image (most important) - only show if clearly not a plant
-        # Only flag if it's VERY clearly not a plant (very low green, bright non-green colors)
-        if not is_plant:
-            warning_message = "🚫 **INVALID INPUT: This image doesn't appear to be a plant leaf!**\n\n"
+        # Priority 1: Non-plant image (most important) - only show if VERY clearly not a plant
+        # Only flag if it's extremely obvious (like a phone, tablet, pure object with no green)
+        if not is_plant and green_ratio < 0.05:
+            warning_message = "🚫 **INVALID INPUT: This image doesn't appear to be a plant!**\n\n"
             warning_message += "The uploaded image appears to be a device, object, or non-plant image. "
-            warning_message += "This model is designed specifically for crop leaf disease detection.\n\n"
-            warning_message += "**Please upload:** A clear, well-lit photograph of a single crop leaf (tomato, potato, apple, corn, grape, etc.)\n\n"
+            warning_message += "This model is designed specifically for crop disease detection.\n\n"
+            warning_message += "**Please upload:** A clear, well-lit photograph of a crop leaf, plant, or field (tomato, potato, apple, corn, wheat, grape, etc.)\n\n"
         
-        # Priority 2: Low confidence (only show as a note, not a warning)
-        if low_confidence and is_plant:
-            # Don't show warning for low confidence - just let the model prediction show
-            # The model is pre-trained and may have lower confidence, which is normal
-            pass
+        # Priority 2: Low confidence - don't show warnings, just let model work
+        # Low confidence is normal for pre-trained models, especially with crops/fields
+        pass
         
         # Extract disease name (remove crop name for info lookup)
         disease_key = display_name
@@ -421,21 +421,19 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
         else:
             description = f"**Severity:** {info['severity']}\n\n**Detected:** {display_name}\n\n{info['description']}"
         
-        # Format recommendation - only override for clearly invalid inputs
-        if not is_plant:
+        # Format recommendation - only override for VERY clearly invalid inputs
+        if not is_plant and green_ratio < 0.05:
             recommendation = "🚫 **Invalid Image Type Detected**\n\n"
-            recommendation += "This image does not appear to be a plant leaf. The G-well model is specifically trained to detect diseases in crop leaves.\n\n"
+            recommendation += "This image does not appear to be a plant. The G-well model is specifically trained to detect diseases in crops.\n\n"
             recommendation += "**What to upload:**\n"
-            recommendation += "• A clear, close-up photo of a single leaf\n"
+            recommendation += "• A clear photo of a crop leaf, plant, or field\n"
             recommendation += "• Well-lit with natural or good lighting\n"
-            recommendation += "• Focused image (not blurry)\n"
-            recommendation += "• Examples: tomato leaf, potato leaf, apple leaf, corn leaf, etc.\n\n"
+            recommendation += "• Examples: tomato leaf, potato leaf, corn, wheat, apple leaf, etc.\n\n"
             recommendation += "**What NOT to upload:**\n"
-            recommendation += "• Devices, objects, or non-plant images\n"
-            recommendation += "• Full plants or multiple leaves\n"
+            recommendation += "• Devices, objects, or clearly non-plant images\n"
             recommendation += "• Cartoon images or illustrations"
         else:
-            # Always show the disease recommendation for plant images
+            # Always show the disease recommendation for plant images (crops, fields, leaves, etc.)
             recommendation = info['recommendation']
         
         # Add top 3 predictions info
