@@ -425,8 +425,8 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
         else:
             description = f"{warning_message}**Severity:** {info['severity']}\n\n**Detected:** {display_name}\n\n{info['description']}"
         
-        # Format recommendation - always override for invalid inputs
-        if not is_plant:
+        # Format recommendation - only override for clearly invalid inputs
+        if not is_plant and green_ratio < 0.15:
             recommendation = "🚫 **Invalid Image Type Detected**\n\n"
             recommendation += "This image does not appear to be a plant leaf. The G-well model is specifically trained to detect diseases in crop leaves.\n\n"
             recommendation += "**What to upload:**\n"
@@ -438,8 +438,9 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
             recommendation += "• Devices, objects, or non-plant images\n"
             recommendation += "• Full plants or multiple leaves\n"
             recommendation += "• Cartoon images or illustrations"
-        elif low_confidence:
-            recommendation = f"⚠️ **Low Confidence Detection ({confidence * 100:.1f}%)**\n\n"
+        elif low_confidence and is_plant:
+            recommendation = f"⚠️ **Note: Low Confidence ({confidence * 100:.1f}%)**\n\n"
+            recommendation += info['recommendation']
             recommendation += "The prediction confidence is below 50%, which suggests the image may not be optimal for analysis.\n\n"
             recommendation += "**For better results, please:**\n"
             recommendation += "• Upload a clearer, more focused image\n"
