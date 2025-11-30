@@ -242,20 +242,28 @@ def load_model():
     """Load the trained model or create a pre-trained one."""
     global model
     
-    model_path = Path('models/plant_disease_model.pth')
-    
-    if model_path.exists():
-        print(f"Loading trained model from {model_path}")
-        checkpoint = torch.load(model_path, map_location=device)
-        model = create_model()
-        model.load_state_dict(checkpoint['model_state_dict'])
-        model.eval()
-        model = model.to(device)
-        print("✅ Model loaded successfully!")
-        return checkpoint.get('class_names', PLANT_DISEASE_CLASSES)
-    else:
-        print("No trained model found. Using ImageNet pre-trained weights.")
-        print("For better accuracy, run: python train_model.py")
+    try:
+        model_path = Path('models/plant_disease_model.pth')
+        
+        if model_path.exists():
+            print(f"Loading trained model from {model_path}")
+            checkpoint = torch.load(model_path, map_location=device)
+            model = create_model()
+            model.load_state_dict(checkpoint['model_state_dict'])
+            model.eval()
+            model = model.to(device)
+            print("✅ Model loaded successfully!")
+            return checkpoint.get('class_names', PLANT_DISEASE_CLASSES)
+        else:
+            print("No trained model found. Using ImageNet pre-trained weights.")
+            print("For better accuracy, run: python train_model.py")
+            model = create_model()
+            model.eval()
+            model = model.to(device)
+            return PLANT_DISEASE_CLASSES
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        print("Creating new model with ImageNet weights...")
         model = create_model()
         model.eval()
         model = model.to(device)
@@ -458,9 +466,13 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
 def create_interface():
     """Create and return the Gradio interface."""
     
-    # Load model on startup
-    print("Initializing model...")
-    load_model()
+    # Load model on startup (with error handling)
+    try:
+        print("Initializing model...")
+        load_model()
+    except Exception as e:
+        print(f"Warning: Model initialization error: {e}")
+        print("App will continue but may have reduced functionality.")
     
     with gr.Blocks(title="G-well - Disease Detection Demo", theme=gr.themes.Soft()) as demo:
         gr.Markdown(
@@ -544,8 +556,8 @@ def create_interface():
     return demo
 
 
+# Create the interface
+demo = create_interface()
+
 if __name__ == "__main__":
-    demo = create_interface()
-    demo.launch(
-        server_port=7860
-    )
+    demo.launch()
