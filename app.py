@@ -262,16 +262,6 @@ def load_model():
         return PLANT_DISEASE_CLASSES
 
 
-def preprocess_image(image: Image.Image) -> torch.Tensor:
-    """Preprocess image for model input."""
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    return transform(image).unsqueeze(0)
-
-
 def is_likely_plant_image(image: Image.Image) -> Tuple[bool, float]:
     """
     Check if image is likely a plant/leaf based on color analysis.
@@ -308,6 +298,16 @@ def is_likely_plant_image(image: Image.Image) -> Tuple[bool, float]:
     is_plant = (green_dominance and green_ratio > 0.35) and not has_bright_non_green
     
     return is_plant, green_ratio
+
+
+def preprocess_image(image: Image.Image) -> torch.Tensor:
+    """Preprocess image for model input."""
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+    return transform(image).unsqueeze(0)
 
 
 def detect_disease_real(image: Image.Image) -> Tuple[str, float, Dict, bool, float]:
@@ -537,7 +537,7 @@ def create_interface():
             This demo uses RGB image analysis with deep learning. Our production system uses hyperspectral imaging to 
             detect diseases before they become visible to the naked eye, giving farmers a critical early warning advantage.
             
-            For more information, visit our [main website](index.html).
+            For more information, visit our [main website](https://surnaik01.github.io/g-well/).
             """
         )
     
