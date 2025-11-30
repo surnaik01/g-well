@@ -434,16 +434,8 @@ def detect_disease(image: Image.Image) -> Tuple[str, str, str, str]:
             recommendation += "• Devices, objects, or non-plant images\n"
             recommendation += "• Full plants or multiple leaves\n"
             recommendation += "• Cartoon images or illustrations"
-        elif low_confidence and is_plant:
-            recommendation = f"⚠️ **Note: Low Confidence ({confidence * 100:.1f}%)**\n\n"
-            recommendation += info['recommendation']
-            recommendation += "The prediction confidence is below 50%, which suggests the image may not be optimal for analysis.\n\n"
-            recommendation += "**For better results, please:**\n"
-            recommendation += "• Upload a clearer, more focused image\n"
-            recommendation += "• Ensure good lighting\n"
-            recommendation += "• Make sure the leaf fills most of the frame\n"
-            recommendation += "• Avoid shadows or reflections"
         else:
+            # Always show the disease recommendation for plant images
             recommendation = info['recommendation']
         
         # Add top 3 predictions info
