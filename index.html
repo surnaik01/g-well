@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>G-well</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+    
+    /* Logo/Header */
+    .logo {
+      font-size: 72px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 24px;
+      color: #22c55e;
+    }
+    
+    .tagline {
+      font-size: 20px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      color: #111111;
+      max-width: 700px;
+    }
+    
+    .backing {
+      font-size: 16px;
+      color: #666666;
+      margin-bottom: 32px;
+    }
+    
+    blockquote {
+      font-size: 18px;
+      font-style: italic;
+      color: #444444;
+      margin: 32px 0;
+      padding-left: 0;
+      border-left: none;
+      line-height: 1.6;
+    }
+    
+    /* Navigation Buttons */
+    .nav-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 40px 0 60px;
+    }
+    
+    .nav-button {
+      display: inline-block;
+      padding: 10px 20px;
+      border: 2px solid #22c55e;
+      border-radius: 6px;
+      color: #22c55e;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      background: transparent;
+    }
+    
+    .nav-button:hover {
+      background: #22c55e;
+      color: white;
+      text-decoration: none;
+    }
+    
+    /* Sections */
+    section {
+      margin: 80px 0;
+    }
+    
+    section:first-of-type {
+      margin-top: 0;
+    }
+    
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+      color: #111111;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      color: #333333;
+    }
+    
+    p:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      font-weight: 600;
+      color: #111111;
+    }
+    
+    em {
+      font-style: italic;
+    }
+    
+    /* Lists */
+    ul {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+    
+    li {
+      margin-bottom: 8px;
+      line-height: 1.7;
+      color: #333333;
+    }
+    
+    /* Links */
+    a {
+      color: #22c55e;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+    
+    a:hover {
+      border-bottom-color: #22c55e;
+    }
+    
+    /* Demo Section */
+    .demo-container {
+      margin: 32px 0;
+      padding: 32px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    
+    .demo-link {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 12px 24px;
+      border: 2px solid #22c55e;
+      border-radius: 6px;
+      color: #22c55e;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .demo-link:hover {
+      background: #22c55e;
+      color: white;
+      text-decoration: none;
+      border-bottom-color: transparent;
+    }
+    
+    /* Jobs List */
+    .jobs-list {
+      margin: 20px 0;
+    }
+    
+    .jobs-list li {
+      margin-bottom: 12px;
+    }
+    
+    /* News List */
+    .news-list li {
+      margin-bottom: 16px;
+    }
+    
+    .news-list strong {
+      display: inline-block;
+      min-width: 100px;
+      font-weight: 600;
+    }
+    
+    /* Contact Section */
+    .contact-list {
+      margin: 20px 0;
+    }
+    
+    .contact-list li {
+      margin-bottom: 12px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 40px 20px 60px;
+      }
+      
+      .logo {
+        font-size: 48px;
+      }
+      
+      .tagline {
+        font-size: 18px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      .nav-buttons {
+        flex-direction: column;
+      }
+      
+      .nav-button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1000px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">G-well</div>
+      <p class="tagline">
+        We're building early-warning crop disease detection using AI imaging.
+        Farmers react after damage; we help them act days earlier.
+      </p>
+      <p class="backing">
+        Built with AI vision, field hardware, and a lot of time spent talking to farmers.
+      </p>
+      <blockquote>
+        "If you can see disease a week before it appears in the field, you can save an entire season instead of just surviving it."
+      </blockquote>
+    </header>
+    
+    <main>
+      <section id="team">
+        <h2>Team</h2>
+        <p>
+          We're a small team of engineers and builders based in India, close to
+          the farms we want to serve. We've spent the last year obsessed with a
+          single question: <strong>why are we still discovering crop problems
+          with our eyes, days after the damage has already started?</strong>
+        </p>
+        <p>
+          Instead of staying in labs and slide decks, we're working directly
+          with growers and agronomists to turn AI imaging into something
+          farmers actually trust and want to use.
+        </p>
+      </section>
+      
+      <section id="problem">
+        <h2>Problem</h2>
+        <p>
+          Farmers lose a huge chunk of yield every year because diseases are
+          caught too late. By the time leaves turn yellow, get spots, or wilt,
+          the infection has already been spreading for days.
+        </p>
+        <p>
+          Today's tools are mostly reactive:
+        </p>
+        <ul>
+          <li>Manual scouting that can't keep up with large fields.</li>
+          <li>Apps that only detect visible symptoms from RGB photos.</li>
+          <li>Uniform spraying that wastes chemicals and money.</li>
+        </ul>
+        <p>
+          There is <strong>no simple way</strong> for farmers to see invisible
+          stress or infection <em>before</em> it shows up to the naked eye. That
+          timing gap is where most of the damage (and cost) lives.
+        </p>
+      </section>
+      
+      <section id="solution">
+        <h2>Solution</h2>
+        <p>
+          G-well uses AI-powered hyperspectral imaging to spot disease
+          signatures in plants <strong>7–10 days before visible symptoms</strong>.
+        </p>
+        <p>
+          A compact camera unit, mounted on drones or fixed rails, scans fields
+          and captures hundreds of narrow wavelength bands per pixel. Our
+          models learn the biochemical fingerprints of healthy vs. stressed
+          plants, long before the leaf looks "sick".
+        </p>
+        <p>
+          Under the hood:
+        </p>
+        <ul>
+          <li>Vision Transformers trained on labeled spectral leaf data.</li>
+          <li>Time-series models to forecast how infection will spread.</li>
+          <li>A recommendation engine that suggests targeted interventions instead of blanket spraying.</li>
+        </ul>
+        <p>
+          Farmers get a simple view: a field map, early-risk zones, and clear
+          next steps—so they can act early, reduce chemical use, and protect
+          yield instead of just reacting to loss.
+        </p>
+      </section>
+      
+      <section id="demo">
+        <h2>Demo</h2>
+        <p>
+          We've built a web demo where you can upload a leaf image and see how
+          the AI classifies common diseases. It runs on standard RGB photos
+          today; the same pipeline extends to hyperspectral data in the field.
+        </p>
+        <div class="demo-container">
+          <p>
+            Try our interactive demo to see how G-well detects crop diseases from leaf images using real-time AI inference.
+          </p>
+          <a href="demo.html" class="demo-link">Launch Demo →</a>
+        </div>
+      </section>
+      
+      <section id="news">
+        <h2>News &amp; Updates</h2>
+        <ul class="news-list">
+          <li>
+            <strong>Nov 2025</strong> — First prototype passes pilot tests on
+            tomato and grape fields.
+          </li>
+          <li>
+            <strong>Oct 2025</strong> — Web demo launches for early partners.
+          </li>
+          <li>
+            <strong>Sep 2025</strong> — Hyperspectral data collection program
+            starts with growers in India.
+          </li>
+        </ul>
+      </section>
+      
+      <section id="contact">
+        <h2>Contact us</h2>
+        <p>
+          If you're a farmer, agronomist, researcher, investor, or just
+          obsessed with the future of agriculture, we'd love to talk.
+        </p>
+        <p>You can reach us by email at <a href="mailto:founders@g-well.ai">founders@g-well.ai</a></p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

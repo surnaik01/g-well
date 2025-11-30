@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>G-well Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px 100px;
+    }
+    
+    /* Header with logo - matching bindwell.ai style */
+    .header {
+      margin-bottom: 60px;
+    }
+    
+    .logo {
+      font-size: 72px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 24px;
+      color: #22c55e;
+    }
+    
+    .subtitle {
+      font-size: 20px;
+      line-height: 1.5;
+      margin-bottom: 40px;
+      color: #111111;
+      max-width: 700px;
+    }
+    
+    /* Navigation button - bindwell.ai style */
+    .nav-button {
+      display: inline-block;
+      padding: 10px 20px;
+      border: 2px solid #22c55e;
+      border-radius: 6px;
+      color: #22c55e;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      background: transparent;
+      margin-bottom: 60px;
+    }
+    
+    .nav-button:hover {
+      background: #22c55e;
+      color: white;
+      text-decoration: none;
+    }
+    
+    /* Info section - clean and minimal */
+    .info-section {
+      margin-bottom: 40px;
+      max-width: 700px;
+    }
+    
+    .info-section p {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      color: #333333;
+    }
+    
+    .info-section p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .info-section code {
+      background: #f3f4f6;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 14px;
+      color: #22c55e;
+      font-weight: 500;
+    }
+    
+    .info-section strong {
+      font-weight: 600;
+      color: #111111;
+    }
+    
+    /* Iframe container - clean border */
+    .demo-frame-container {
+      margin-top: 60px;
+      width: 100%;
+    }
+    
+    iframe {
+      width: 100%;
+      height: 850px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      display: block;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 60px 20px 80px;
+      }
+      
+      .logo {
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+      
+      .subtitle {
+        font-size: 18px;
+        margin-bottom: 32px;
+      }
+      
+      .nav-button {
+        margin-bottom: 40px;
+      }
+      
+      .info-section {
+        margin-bottom: 32px;
+      }
+      
+      .demo-frame-container {
+        margin-top: 40px;
+      }
+      
+      iframe {
+        height: 700px;
+      }
+    }
+    
+    @media (min-width: 1400px) {
+      .container {
+        max-width: 1400px;
+      }
+      
+      iframe {
+        height: 900px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">G-well</div>
+      <p class="subtitle">
+        Interactive Disease Detection Demo
+      </p>
+      <a href="index.html" class="nav-button">← Back to Home</a>
+    </div>
+    
+    <div class="info-section">
+      <p>
+        Upload a leaf image to see how G-well detects crop diseases using real-time AI inference. 
+        The demo analyzes RGB images and provides disease classification with confidence scores and treatment recommendations.
+      </p>
+      <p>
+        <strong>Note:</strong> Make sure the Gradio app is running. Start it with: <code>python app.py</code>
+      </p>
+    </div>
+    
+    <div class="demo-frame-container">
+      <iframe 
+        src="http://localhost:7860" 
+        title="G-well Disease Detection Demo"
+        allow="camera; microphone"
+        frameborder="0"
+      >
+        <p>Your browser does not support iframes. 
+          <a href="http://localhost:7860" target="_blank">Open the demo in a new window</a>
+        </p>
+      </iframe>
+    </div>
+  </div>
+</body>
+</html>
